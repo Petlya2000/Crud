@@ -11,7 +11,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
  // Validate id
     $input_id = trim($_POST["id"]);
     if(empty($input_id)){
-        $id_err = "Please enter the salary amount.";     
+        $id_err = "Please enter the id.";     
     } elseif(!ctype_digit($input_id)){
         $id_err = "Please enter a positive integer value.";
     } else{
