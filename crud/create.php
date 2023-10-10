@@ -3,11 +3,20 @@
 require_once "config.php";
  
 // Define variables and initialize with empty values
-$name = $address = $salary = "";
-$name_err = $address_err = $salary_err = "";
+$id=$name = $address = $salary = "";
+$id_err=$name_err = $address_err = $salary_err = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+ // Validate id
+    $input_id = trim($_POST["id"]);
+    if(empty($input_id)){
+        $id_err = "Please enter the salary amount.";     
+    } elseif(!ctype_digit($input_id)){
+        $id_err = "Please enter a positive integer value.";
+    } else{
+        $id = $input_id;
+    }
     // Validate name
     $input_name = trim($_POST["name"]);
     if(empty($input_name)){
@@ -37,15 +46,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     
     // Check input errors before inserting in database
-    if(empty($name_err) && empty($address_err) && empty($salary_err)){
+    if(empty($id_err) &&empty($name_err) && empty($address_err) && empty($salary_err)){
         // Prepare an insert statement
-        $sql = "INSERT INTO employees (name, address, salary) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO employees (id,name, address, salary) VALUES (?,?, ?, ?)";
          
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "sss", $param_name, $param_address, $param_salary);
+            mysqli_stmt_bind_param($stmt, "sss", $param_id,$param_name, $param_address, $param_salary);
             
             // Set parameters
+             $param_id = $id;
             $param_name = $name;
             $param_address = $address;
             $param_salary = $salary;
@@ -90,6 +100,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     <h2 class="mt-5">Create Record</h2>
                     <p>Please fill this form and submit to add employee record to the database.</p>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                     <div class="form-group">
+                            <label>Id</label>
+                            <input type="text" name="name" class="form-control <?php echo (!empty($id_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $id; ?>">
+                            <span class="invalid-feedback"><?php echo $id_err;?></span>
+                        </div>
                         <div class="form-group">
                             <label>Name</label>
                             <input type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $name; ?>">
